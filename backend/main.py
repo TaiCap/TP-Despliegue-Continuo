@@ -1,7 +1,18 @@
+import os
+
+import sentry_sdk
 from fastapi import FastAPI, HTTPException
 from sqlalchemy import text
 
 from database import SessionLocal
+
+# Conecta la app con Sentry. El DSN viene de una variable de entorno,
+# así no queda escrito en el código (el repo es público).
+# Si SENTRY_DSN no existe (por ejemplo en mi PC), Sentry simplemente no hace nada.
+sentry_sdk.init(
+    dsn=os.getenv("SENTRY_DSN"),
+    environment=os.getenv("ENVIRONMENT", "production"),
+)
 
 app = FastAPI()
 
@@ -34,3 +45,10 @@ def obtener_usuario(usuario_id: int):
 
     finally:
         db.close()
+
+
+# Endpoint para provocar un error a propósito (lo usamos en el video).
+# Dividir por cero lanza una excepción que nadie atrapa, y Sentry la registra.
+@app.get("/error")
+def provocar_error():
+    return 1 / 0
