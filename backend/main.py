@@ -16,6 +16,23 @@ sentry_sdk.init(
 
 app = FastAPI()
 
+# Crea la tabla usuarios si no existe y carga los datos iniciales.
+# Es lo mismo que hacía mysql/init.sql, pero lo hace el backend al arrancar.
+def preparar_base():
+    with engine.begin() as conn:
+        conn.execute(text(
+            "CREATE TABLE IF NOT EXISTS usuarios ("
+            "id INT AUTO_INCREMENT PRIMARY KEY, "
+            "nombre VARCHAR(100) NOT NULL)"
+        ))
+        cantidad = conn.execute(text("SELECT COUNT(*) FROM usuarios")).scalar()
+        if cantidad == 0:
+            conn.execute(text(
+                "INSERT INTO usuarios (nombre) VALUES ('Diego'), ('Ricardo')"
+            ))
+
+
+preparar_base()
 
 @app.get("/")
 def root():
