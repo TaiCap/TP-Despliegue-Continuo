@@ -4,7 +4,7 @@ import sentry_sdk
 from fastapi import FastAPI, HTTPException
 from sqlalchemy import text
 
-from database import SessionLocal
+from database import SessionLocal, engine
 
 # Conecta la app con Sentry. El DSN viene de una variable de entorno,
 # así no queda escrito en el código (el repo es público).
