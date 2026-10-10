@@ -69,3 +69,35 @@ def obtener_usuario(usuario_id: int):
 @app.get("/error")
 def provocar_error():
     return 1 / 0
+
+# Error de tipo: sumar un número con un texto.
+# En Sentry aparece como TypeError.
+@app.get("/error-tipo")
+def error_tipo():
+    return 5 + "texto"
+
+
+# Error de clave: pedir una clave que no existe en un diccionario.
+# En Sentry aparece como KeyError.
+@app.get("/error-clave")
+def error_clave():
+    datos = {"nombre": "Diego"}
+    return datos["edad"]
+
+
+# Error de excepción propia: lanzamos una excepción con nuestro mensaje.
+# En Sentry aparece como Exception con el texto que escribimos.
+@app.get("/error-manual")
+def error_manual():
+    raise Exception("Error provocado a propósito para probar Sentry")
+
+
+# Error de base de datos: consultamos una tabla que no existe.
+# En Sentry aparece como ProgrammingError y muestra la consulta que falló.
+@app.get("/error-db")
+def error_db():
+    db = SessionLocal()
+    try:
+        db.execute(text("SELECT * FROM tabla_que_no_existe"))
+    finally:
+        db.close()
