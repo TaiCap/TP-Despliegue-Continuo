@@ -6,11 +6,11 @@ from sqlalchemy import text
 
 from database import SessionLocal, engine
 
-# Conecta la app con Sentry. El DSN viene de una variable de entorno,
-# así no queda escrito en el código (el repo es público).
-# Si SENTRY_DSN no existe (por ejemplo en mi PC), Sentry simplemente no hace nada.
+# Conecta la app con Sentry. El DSN se lee de la variable de entorno SENTRY_DSN;
+# si no está configurada en la plataforma, usa el valor por defecto.
+# El DSN solo permite ENVIAR errores, no acceder a la cuenta de Sentry.
 sentry_sdk.init(
-    dsn=os.getenv("SENTRY_DSN"),
+    dsn=os.getenv("SENTRY_DSN","https://4902b70edc30a7b7aa21d73475c13a1a@o4512274304270336.ingest.us.sentry.io/4512274310627328"),
     environment=os.getenv("ENVIRONMENT", "production"),
 )
 
